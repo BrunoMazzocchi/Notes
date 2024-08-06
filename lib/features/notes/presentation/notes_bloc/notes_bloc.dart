@@ -28,7 +28,7 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
   }
 
   void _subscribeToNotes() {
-    _notesSubscription = _noteRepository.watchNotes().listen((notes) {
+    _notesSubscription = _noteRepository.watch().listen((notes) {
       add(NotesUpdated(notes)); 
     });
   }
@@ -73,6 +73,7 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
   @override
   Future<void> close() {
     _notesSubscription?.cancel();
+    _noteRepository.dispose();
     return super.close();
   }
 }
