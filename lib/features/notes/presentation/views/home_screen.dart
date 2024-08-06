@@ -48,6 +48,15 @@ class HomeScreen extends StatelessWidget {
                 return ListTile(
                   title: Text(note.title ?? ''),
                   subtitle: Text(note.content ?? ''),
+                  leading: IconButton(
+                    icon: note.isFavorite
+                        ? const Icon(Icons.star)
+                        : const Icon(Icons.star_border),
+                    onPressed: () {
+                      note.isFavorite = !note.isFavorite;
+                      context.read<NotesBloc>().add(UpdateNote(note));
+                    },
+                  ),
                   trailing: IconButton(
                     icon: const Icon(Icons.chevron_right),
                     onPressed: () {

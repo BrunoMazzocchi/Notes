@@ -15,6 +15,7 @@ class NoteDetailBloc extends Bloc<NoteDetailEvent, NoteDetailState> {
         super(NoteDetailInitial()) {
     on<GetNoteDetail>(_getNoteDetail);
     on<DeleteNote>(_deleteNote);
+    on<UpdateNote>(_updateNote);
   }
 
   Future<void> _deleteNote(
@@ -34,6 +35,17 @@ class NoteDetailBloc extends Bloc<NoteDetailEvent, NoteDetailState> {
       emit(NoteDetailLoading());
       final note = await _noteRepository.getNoteById(event.id);
       emit(NoteDetailLoaded(note));
+    } catch (e) {
+      emit(NoteDetailError(e.toString()));
+    }
+  }
+
+  Future<void> _updateNote(
+      UpdateNote event, Emitter<NoteDetailState> emit) async {
+    try {
+      emit(NoteDetailLoading());
+      await _noteRepository.updateNote(event.note);
+      emit(NoteDetailLoaded(event.note));
     } catch (e) {
       emit(NoteDetailError(e.toString()));
     }

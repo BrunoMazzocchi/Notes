@@ -14,6 +14,8 @@ class NoteEntity {
 
   @enumerated
   Status status = Status.pending;
+
+  bool isFavorite = false;
 }
 
 enum Status {

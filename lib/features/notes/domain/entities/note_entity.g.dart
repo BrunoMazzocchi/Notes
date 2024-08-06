@@ -22,19 +22,24 @@ const NoteEntitySchema = CollectionSchema(
       name: r'content',
       type: IsarType.string,
     ),
-    r'isPinned': PropertySchema(
+    r'isFavorite': PropertySchema(
       id: 1,
+      name: r'isFavorite',
+      type: IsarType.bool,
+    ),
+    r'isPinned': PropertySchema(
+      id: 2,
       name: r'isPinned',
       type: IsarType.bool,
     ),
     r'status': PropertySchema(
-      id: 2,
+      id: 3,
       name: r'status',
       type: IsarType.byte,
       enumMap: _NoteEntitystatusEnumValueMap,
     ),
     r'title': PropertySchema(
-      id: 3,
+      id: 4,
       name: r'title',
       type: IsarType.string,
     )
@@ -95,9 +100,10 @@ void _noteEntitySerialize(
   Map<Type, List<int>> allOffsets,
 ) {
   writer.writeString(offsets[0], object.content);
-  writer.writeBool(offsets[1], object.isPinned);
-  writer.writeByte(offsets[2], object.status.index);
-  writer.writeString(offsets[3], object.title);
+  writer.writeBool(offsets[1], object.isFavorite);
+  writer.writeBool(offsets[2], object.isPinned);
+  writer.writeByte(offsets[3], object.status.index);
+  writer.writeString(offsets[4], object.title);
 }
 
 NoteEntity _noteEntityDeserialize(
@@ -109,11 +115,12 @@ NoteEntity _noteEntityDeserialize(
   final object = NoteEntity();
   object.content = reader.readStringOrNull(offsets[0]);
   object.id = id;
-  object.isPinned = reader.readBoolOrNull(offsets[1]);
+  object.isFavorite = reader.readBool(offsets[1]);
+  object.isPinned = reader.readBoolOrNull(offsets[2]);
   object.status =
-      _NoteEntitystatusValueEnumMap[reader.readByteOrNull(offsets[2])] ??
+      _NoteEntitystatusValueEnumMap[reader.readByteOrNull(offsets[3])] ??
           Status.draft;
-  object.title = reader.readStringOrNull(offsets[3]);
+  object.title = reader.readStringOrNull(offsets[4]);
   return object;
 }
 
@@ -127,11 +134,13 @@ P _noteEntityDeserializeProp<P>(
     case 0:
       return (reader.readStringOrNull(offset)) as P;
     case 1:
-      return (reader.readBoolOrNull(offset)) as P;
+      return (reader.readBool(offset)) as P;
     case 2:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 3:
       return (_NoteEntitystatusValueEnumMap[reader.readByteOrNull(offset)] ??
           Status.draft) as P;
-    case 3:
+    case 4:
       return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -608,6 +617,16 @@ extension NoteEntityQueryFilter
     });
   }
 
+  QueryBuilder<NoteEntity, NoteEntity, QAfterFilterCondition> isFavoriteEqualTo(
+      bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'isFavorite',
+        value: value,
+      ));
+    });
+  }
+
   QueryBuilder<NoteEntity, NoteEntity, QAfterFilterCondition> isPinnedIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -856,6 +875,18 @@ extension NoteEntityQuerySortBy
     });
   }
 
+  QueryBuilder<NoteEntity, NoteEntity, QAfterSortBy> sortByIsFavorite() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isFavorite', Sort.asc);
+    });
+  }
+
+  QueryBuilder<NoteEntity, NoteEntity, QAfterSortBy> sortByIsFavoriteDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isFavorite', Sort.desc);
+    });
+  }
+
   QueryBuilder<NoteEntity, NoteEntity, QAfterSortBy> sortByIsPinned() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isPinned', Sort.asc);
@@ -919,6 +950,18 @@ extension NoteEntityQuerySortThenBy
     });
   }
 
+  QueryBuilder<NoteEntity, NoteEntity, QAfterSortBy> thenByIsFavorite() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isFavorite', Sort.asc);
+    });
+  }
+
+  QueryBuilder<NoteEntity, NoteEntity, QAfterSortBy> thenByIsFavoriteDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isFavorite', Sort.desc);
+    });
+  }
+
   QueryBuilder<NoteEntity, NoteEntity, QAfterSortBy> thenByIsPinned() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isPinned', Sort.asc);
@@ -965,6 +1008,12 @@ extension NoteEntityQueryWhereDistinct
     });
   }
 
+  QueryBuilder<NoteEntity, NoteEntity, QDistinct> distinctByIsFavorite() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'isFavorite');
+    });
+  }
+
   QueryBuilder<NoteEntity, NoteEntity, QDistinct> distinctByIsPinned() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'isPinned');
@@ -996,6 +1045,12 @@ extension NoteEntityQueryProperty
   QueryBuilder<NoteEntity, String?, QQueryOperations> contentProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'content');
+    });
+  }
+
+  QueryBuilder<NoteEntity, bool, QQueryOperations> isFavoriteProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'isFavorite');
     });
   }
 

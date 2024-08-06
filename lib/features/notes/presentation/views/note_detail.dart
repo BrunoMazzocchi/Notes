@@ -54,11 +54,39 @@ class _NoteDetailState extends State<NoteDetail> {
         body: Center(
           child: Text('Note Detail: ${widget.id}'),
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            context.read<NoteDetailBloc>().add(DeleteNote(note!));
+        floatingActionButton: BlocBuilder<NoteDetailBloc, NoteDetailState>(
+          builder: (context, state) {
+            
+            if (note == null) {
+              return const SizedBox.shrink();
+            }
+
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 16.0),
+                  child: FloatingActionButton(
+                    heroTag: 'delete',
+                    onPressed: () {
+                      context.read<NoteDetailBloc>().add(DeleteNote(note!));
+                    },
+                    child: const Icon(Icons.delete),
+                  ),
+                ),
+                FloatingActionButton(
+                  heroTag: 'favorite',
+                  onPressed: () {
+                    note!.isFavorite = !note!.isFavorite;
+                    context.read<NoteDetailBloc>().add(UpdateNote(note!));
+                  },
+                  child: note!.isFavorite
+                      ? const Icon(Icons.star)
+                      : const Icon(Icons.star_border),
+                ),
+              ],
+            );
           },
-          child: const Icon(Icons.delete),
         ),
       ),
     );
