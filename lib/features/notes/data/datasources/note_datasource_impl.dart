@@ -27,7 +27,14 @@ class NoteDatasourceImpl implements NoteDatasource {
   }
 
   @override
-  Future<void> updateNote(NoteEntity note) async{
+  Future<void> updateNote(NoteEntity note) async {
     await _isar.writeTxn(() => _isar.noteEntitys.put(note));
+  }
+
+  @override
+  Future<NoteEntity> getNoteById(String noteId) async {
+    final note = await _isar.noteEntitys.get(int.parse(noteId));
+
+    return note!;
   }
 }

@@ -28,4 +28,9 @@ class NoteRepositoryImpl implements NoteRepository {
   Future<void> updateNote(NoteEntity note) async {
     return _noteDatasource.updateNote(note);
   }
+  
+  @override
+  Future<NoteEntity> getNoteById(String noteId) {
+    return _noteDatasource.getNoteById(noteId);
+  }
 }
