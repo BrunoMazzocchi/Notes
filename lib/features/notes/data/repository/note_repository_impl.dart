@@ -15,7 +15,7 @@ class NoteRepositoryImpl implements NoteRepository {
   }
 
   @override
-  Future<void> deleteNote(NoteEntity note) async  {
+  Future<void> deleteNote(NoteEntity note) async {
     return _noteDatasource.deleteNote(note);
   }
 
@@ -28,9 +28,14 @@ class NoteRepositoryImpl implements NoteRepository {
   Future<void> updateNote(NoteEntity note) async {
     return _noteDatasource.updateNote(note);
   }
-  
+
   @override
   Future<NoteEntity> getNoteById(String noteId) {
     return _noteDatasource.getNoteById(noteId);
+  }
+
+  @override
+  Stream<List<NoteEntity>> watchNotes() {
+    return _noteDatasource.watchNotes();
   }
 }

@@ -35,3 +35,12 @@ class DeleteNote extends NotesEvent {
   @override
   List<Object> get props => [note];
 }
+
+class NotesUpdated extends NotesEvent {
+  final List<NoteEntity> notes;
+
+  const NotesUpdated(this.notes);
+
+  @override
+  List<Object> get props => [notes];
+}

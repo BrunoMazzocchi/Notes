@@ -37,4 +37,13 @@ class NoteDatasourceImpl implements NoteDatasource {
 
     return note!;
   }
+
+  @override
+  Stream<List<NoteEntity>> watchNotes() {
+    final stream = _isar.noteEntitys.watchLazy();
+
+    return stream.asyncMap(
+      (_) async => await _isar.noteEntitys.where().findAll(),
+    );
+  }
 }

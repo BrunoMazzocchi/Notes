@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notes/features/notes/domain/entities/note_entity.dart';
@@ -8,6 +9,7 @@ part 'notes_state.dart';
 
 class NotesBloc extends Bloc<NotesEvent, NotesState> {
   final NoteRepository _noteRepository;
+  StreamSubscription<List<NoteEntity>>? _notesSubscription;
 
   NotesBloc({
     required NoteRepository noteRepository,
@@ -17,6 +19,18 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
     on<AddNote>(_addNote);
     on<UpdateNote>(_updateNote);
     on<DeleteNote>(_deleteNote);
+    on<NotesUpdated>(_mapNotesUpdatedToState);
+    _subscribeToNotes();
+  }
+
+  void _mapNotesUpdatedToState(NotesUpdated event, Emitter<NotesState> emit) {
+    emit(NotesLoaded(event.notes));
+  }
+
+  void _subscribeToNotes() {
+    _notesSubscription = _noteRepository.watchNotes().listen((notes) {
+      add(NotesUpdated(notes)); 
+    });
   }
 
   Future<void> _getNotes(GetNotes event, Emitter<NotesState> emit) async {
@@ -33,8 +47,6 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
     try {
       emit(NotesLoading());
       await _noteRepository.addNote(event.note);
-      final notes = await _noteRepository.getNotes();
-      emit(NotesLoaded(notes));
     } catch (e) {
       emit(NotesError(e.toString()));
     }
@@ -44,8 +56,6 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
     try {
       emit(NotesLoading());
       await _noteRepository.updateNote(event.note);
-      final notes = await _noteRepository.getNotes();
-      emit(NotesLoaded(notes));
     } catch (e) {
       emit(NotesError(e.toString()));
     }
@@ -55,10 +65,14 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
     try {
       emit(NotesLoading());
       await _noteRepository.deleteNote(event.note);
-      final notes = await _noteRepository.getNotes();
-      emit(NotesLoaded(notes));
     } catch (e) {
       emit(NotesError(e.toString()));
     }
+  }
+
+  @override
+  Future<void> close() {
+    _notesSubscription?.cancel();
+    return super.close();
   }
 }
