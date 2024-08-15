@@ -9,7 +9,6 @@ class NoteDetail extends StatefulWidget {
 
   static const String routeName = 'note-detail';
   static const String routePath = '/note-detail';
-
   final String id;
 
   @override
@@ -56,7 +55,6 @@ class _NoteDetailState extends State<NoteDetail> {
         ),
         floatingActionButton: BlocBuilder<NoteDetailBloc, NoteDetailState>(
           builder: (context, state) {
-            
             if (note == null) {
               return const SizedBox.shrink();
             }
