@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:isar/isar.dart';
 import 'package:notes/core/config/router/router_config.dart';
+import 'package:notes/core/plugins/geo_locator_plugin.dart';
+import 'package:notes/features/location/presentation/bloc/location_bloc.dart';
 import 'package:notes/features/notes/data/datasources/note_datasource_impl.dart';
 import 'package:notes/features/notes/data/repository/note_repository_impl.dart';
 import 'package:notes/features/notes/domain/entities/note_entity.dart';
@@ -66,6 +68,12 @@ class MyApp extends StatelessWidget {
           BlocProvider<NoteDetailBloc>(
             create: (context) => NoteDetailBloc(
               noteRepository: context.read<NoteRepository>(),
+            ),
+          ),
+
+          BlocProvider<LocationBloc>(
+            create: (context) => LocationBloc(
+              geoLocatorPlugin: GeoLocatorPlugin(),
             ),
           ),
         ],

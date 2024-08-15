@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:notes/features/location/presentation/pages/location_screen.dart';
 import 'package:notes/features/notes/presentation/views/notes_screen.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
@@ -24,6 +25,13 @@ class HomeScreen extends StatelessWidget {
               'Notes',
               () {
                 context.push(NotesScreen.routePath);
+              },
+            ),
+
+            _customTile(
+              'Location',
+              () {
+                context.push(LocationScreen.routePath);
               },
             ),
           ],

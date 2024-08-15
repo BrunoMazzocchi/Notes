@@ -1,4 +1,5 @@
 import 'package:go_router/go_router.dart';
+import 'package:notes/features/location/presentation/pages/location_screen.dart';
 import 'package:notes/features/notes/presentation/views/note_detail.dart';
 import 'package:notes/features/notes/presentation/views/notes_screen.dart';
 import 'package:notes/features/presentation/view/pages/home_screen.dart';
@@ -9,6 +10,10 @@ final goRouter = GoRouter(
       path: '/',
       builder: (context, state) => const HomeScreen(),
       routes: [
+        GoRoute(
+          path: 'location-screen',
+          builder: (context, state) => const LocationScreen(),
+        ),
         GoRoute(
           path: 'notes-screen',
           builder: (context, state) => const NotesScreen(),
