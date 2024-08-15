@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:geolocator/geolocator.dart';
@@ -34,7 +33,7 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
     emit(LocationLoading());
 
     try {
-      emit(LocationLoaded(event.position.latitude, event.position.longitude));
+      emit(LocationLoaded(event.position));
     } catch (e) {
       emit(const LocationError('Failed to get location.'));
     }

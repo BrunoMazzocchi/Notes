@@ -20,7 +20,7 @@ class GeoLocatorPlugin {
 
     const LocationSettings locationSettings = LocationSettings(
       accuracy: LocationAccuracy.high,
-      distanceFilter: 10,
+      distanceFilter: 0,
     );
 
     yield* Geolocator.getPositionStream(locationSettings: locationSettings);

@@ -4,7 +4,7 @@ sealed class LocationEvent extends Equatable {
   const LocationEvent();
 
   @override
-  List<Object> get props => [];
+  List<Object?> get props => [];
 }
 
 final class GetLocationEvent extends LocationEvent {
@@ -13,7 +13,7 @@ final class GetLocationEvent extends LocationEvent {
   const GetLocationEvent(this.position);
 
   @override
-  List<Object> get props => [position];
+  List<Object?> get props => [position];
 }
 
 final class GetLocationPermissionEvent extends LocationEvent {}

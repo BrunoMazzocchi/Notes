@@ -12,10 +12,9 @@ final class LocationInitial extends LocationState {}
 final class LocationLoading extends LocationState {}
 
 final class LocationLoaded extends LocationState {
-  final double latitude;
-  final double longitude;
+  final Position position;
 
-  const LocationLoaded(this.latitude, this.longitude);
+  const LocationLoaded(this.position);
 }
 
 final class LocationError extends LocationState {

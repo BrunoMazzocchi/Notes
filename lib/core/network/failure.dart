@@ -23,3 +23,14 @@ class ReachedMaxLimitFailure extends Failure {
   @override
   List<Object?> get props => [error];
 }
+
+class LocalDatasourceFailure extends Failure {
+  final Object? error;
+
+  LocalDatasourceFailure({
+    this.error,
+  });
+
+  @override
+  List<Object?> get props => [error];
+}
