@@ -7,10 +7,13 @@ class LocalLocationDataSourceImpl implements LocalLocationDataSource {
 
   LocalLocationDataSourceImpl({required Isar isar}) : _isar = isar;
 
-
   @override
   Future<List<LocationEntity>> getLocation() async {
-    return _isar.locationEntitys.where().findAll();
+    List<LocationEntity> location =
+        await _isar.locationEntitys.where().findAll();
+    // Sort location to return the last to be added first in the list
+    location.sort((a, b) => b.id.compareTo(a.id));
+    return location;
   }
 
   @override
