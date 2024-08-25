@@ -4,7 +4,8 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:notes/features/location/presentation/bloc/historic_location/historic_location_bloc.dart';
 import 'package:notes/features/location/presentation/bloc/location_bloc/location_bloc.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
-import 'package:latlong2/latlong.dart'; // Assuming you need this for the FlutterMap
+// ignore: depend_on_referenced_packages
+import 'package:latlong2/latlong.dart'; 
 
 class LocationScreen extends StatefulWidget {
   static const String routeName = '/location-screen';
@@ -171,7 +172,7 @@ class _LocationScreenState extends State<LocationScreen> {
 
             return const Center(
               child: Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: EdgeInsets.all(16.0),
                 child: CircularProgressIndicator(),
               ),
             );
