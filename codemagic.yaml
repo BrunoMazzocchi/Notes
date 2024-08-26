@@ -10,6 +10,22 @@ workflows:
       - name: Run tests
         script: |
           flutter test
+      - name: Update Android compileSdkVersion
+        script: |
+          # Update compileSdkVersion to 34 in build.gradle
+          sed -i '' 's/compileSdkVersion [0-9]*/compileSdkVersion 34/' android/app/build.gradle
+          sed -i '' 's/targetSdkVersion [0-9]*/targetSdkVersion 34/' android/app/build.gradle
       - name: Build APK
         script: |
-          flutter build apk
+          # Build APK with no tree shaking for icons
+          flutter build apk --release --no-tree-shake-icons
+      - name: Update iOS deployment target
+        script: |
+          # Update the iOS deployment target to the latest supported version
+          sed -i '' 's/MIN_IOS_VERSION = [0-9.]*/MIN_IOS_VERSION = 11.0/' ios/Podfile
+      - name: Build iOS App
+        script: |
+          # Ensure CocoaPods are installed
+          pod install --project-directory=ios
+          # Build iOS app
+          flutter build ios --release --no-tree-shake-icons
