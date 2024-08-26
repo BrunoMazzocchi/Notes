@@ -8,6 +8,7 @@ environment:
 
 dependencies:
   build_runner: ^2.4.9
+  cupertino_icons: ^1.0.8
   dartz: ^0.10.1
   equatable: ^2.0.5
   flutter:
