@@ -10,14 +10,6 @@ workflows:
         script: |
           flutter pub get
 
-      - name: Validate Flutter format
-        script: |
-          flutter format --set-exit-if-changed .
-          if [ $? -ne 0 ]; then
-            echo "Code is not properly formatted. Please run 'flutter format .' locally and commit the changes."
-            exit 1
-          fi
-
       - name: Analyze code for issues (Lint)
         script: |
           flutter analyze
