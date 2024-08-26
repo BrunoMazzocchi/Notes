@@ -45,7 +45,6 @@ workflows:
 
       - name: Build APK (Android)
         script: |
-          # Ensure Gradle is using the correct SDK version
           flutter build apk --release
           if [ $? -ne 0 ]; then
             echo "APK build failed. Please check the logs above."
@@ -54,7 +53,6 @@ workflows:
 
       - name: Build IPA (iOS)
         script: |
-          # Ensure CocoaPods are installed and up to date
           pod install --project-directory=ios
           flutter build ios --release --no-codesign
           if [ $? -ne 0 ]; then
