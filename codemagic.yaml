@@ -1,15 +1,63 @@
 workflows:
   flutter-workflow:
     name: Flutter Build
+    max_build_duration: 120
+    instance_type: mac_mini_m1
     environment:
       flutter: stable
     scripts:
       - name: Install dependencies
         script: |
           flutter pub get
+
+      - name: Validate Flutter format
+        script: |
+          flutter format --set-exit-if-changed .
+          if [ $? -ne 0 ]; then
+            echo "Code is not properly formatted. Please run 'flutter format .' locally and commit the changes."
+            exit 1
+          fi
+
+      - name: Analyze code for issues (Lint)
+        script: |
+          flutter analyze
+          if [ $? -ne 0 ]; then
+            echo "Flutter analyze found issues. Please fix the above issues and commit the changes."
+            exit 1
+          fi
+
       - name: Run tests
         script: |
           flutter test
-      - name: Build APK
+          if [ $? -ne 0 ]; then
+            echo "Some tests failed. Please fix the above issues and commit the changes."
+            exit 1
+          fi
+
+      - name: Check for outdated dependencies
         script: |
-          flutter build apk
+          outdated=$(flutter pub outdated --json)
+          if [ $? -ne 0 ]; then
+            echo "Dependencies are outdated. Please update your dependencies by running 'flutter pub upgrade'."
+            echo "$outdated"
+            exit 1
+          fi
+
+      - name: Build APK (Android)
+        script: |
+          # Ensure Gradle is using the correct SDK version
+          flutter build apk --release
+          if [ $? -ne 0 ]; then
+            echo "APK build failed. Please check the logs above."
+            exit 1
+          fi
+
+      - name: Build IPA (iOS)
+        script: |
+          # Ensure CocoaPods are installed and up to date
+          pod install --project-directory=ios
+          flutter build ios --release --no-codesign
+          if [ $? -ne 0 ]; then
+            echo "iOS build failed. Please check the logs above."
+            exit 1
+          fi
