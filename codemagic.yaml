@@ -15,15 +15,6 @@ workflows:
     environment:
       # Specifies the Flutter channel to be used, in this case, the stable channel.
       flutter: stable
-      cache:
-        # Caches Flutter SDK to avoid downloading it for every build.
-        cache_paths:
-          - ~/.pub-cache
-          - $FLUTTER_ROOT
-          - ios/Pods
-          - ios/.symlinks
-          - ios/Flutter/Flutter.framework
-          - ios/Flutter/Flutter.podspec
     scripts:
       - name: Install dependencies
         # Installs the required Flutter dependencies for the project.
@@ -81,6 +72,16 @@ workflows:
             echo "iOS build failed. Please check the logs above."
             exit 1
           fi
+
+    cache:
+      # Caches Flutter SDK and dependencies to speed up subsequent builds.
+      cache_paths:
+        - ~/.pub-cache
+        - $FLUTTER_ROOT
+        - ios/Pods
+        - ios/.symlinks
+        - ios/Flutter/Flutter.framework
+        - ios/Flutter/Flutter.podspec
 
   # Workflow for building and signing the app for production release.
   production-workflow:
