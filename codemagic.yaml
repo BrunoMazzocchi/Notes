@@ -5,25 +5,19 @@
 
 workflows:
 
-  # Workflow for general Flutter builds and testing, used as a base for all environments.
-  flutter-workflow:
-    name: Flutter Build
-    # Sets the maximum build duration to 120 minutes.
+  # Base Workflow for all environments
+  base-workflow:
+    name: Base Flutter Workflow
     max_build_duration: 120
-    # Specifies the instance type for macOS, using the Mac Mini with M1 chip.
     instance_type: mac_mini_m1
     environment:
-      # Specifies the Flutter channel to be used, in this case, the stable channel.
       flutter: stable
     scripts:
       - name: Install dependencies
-        # Installs the required Flutter dependencies for the project.
         script: |
           flutter pub get
 
       - name: Analyze code for issues (Lint)
-        # Analyzes the Flutter codebase for issues and ensures the code follows best practices.
-        # If any issues are found, the build process will stop and require fixes.
         script: |
           flutter analyze
           if [ $? -ne 0 ]; then
@@ -32,8 +26,6 @@ workflows:
           fi
 
       - name: Run tests
-        # Runs unit and widget tests for the Flutter app.
-        # If any tests fail, the build process will stop and require fixes.
         script: |
           flutter test
           if [ $? -ne 0 ]; then
@@ -42,34 +34,11 @@ workflows:
           fi
 
       - name: Check for outdated dependencies
-        # Checks for outdated dependencies and suggests updating them.
-        # If outdated dependencies are found, the build process will stop and require updates.
         script: |
           outdated=$(flutter pub outdated --json)
           if [ $? -ne 0 ]; then
             echo "Dependencies are outdated. Please update your dependencies by running 'flutter pub upgrade'."
             echo "$outdated"
-            exit 1
-          fi
-
-      - name: Build APK (Android)
-        # Builds the APK for Android in release mode.
-        # If the build fails, the process will stop and provide error logs.
-        script: |
-          flutter build apk --release
-          if [ $? -ne 0 ]; then
-            echo "APK build failed. Please check the logs above."
-            exit 1
-          fi
-
-      - name: Build IPA (iOS)
-        # Builds the IPA for iOS in release mode without code signing.
-        # If the build fails, the process will stop and provide error logs.
-        script: |
-          pod install --project-directory=ios
-          flutter build ios --release --no-codesign
-          if [ $? -ne 0 ]; then
-            echo "iOS build failed. Please check the logs above."
             exit 1
           fi
 
@@ -86,15 +55,13 @@ workflows:
   # Workflow for building and signing the app for production release.
   production-workflow:
     name: Production Release
-    # Inherits all steps from the flutter-workflow.
-    extends: flutter-workflow
+    max_build_duration: 120
+    instance_type: mac_mini_m1
     environment:
-      # Sets the app version and build number for production.
+      flutter: stable
       vars:
         APP_VERSION: 1.0.0
         BUILD_NUMBER: 1
-      # Specifies the Flutter channel to be used, in this case, the stable channel.
-      flutter: stable
       # Commented out: Signing credentials for Android and iOS.
       # android_signing:
       #   key_alias: $SIGNING_KEY_ALIAS
@@ -106,6 +73,35 @@ workflows:
       #     ios_app: $PROVISIONING_PROFILE
       #   code_signing_identity: $CODE_SIGNING_IDENTITY
     scripts:
+      - name: Install dependencies
+        script: |
+          flutter pub get
+
+      - name: Analyze code for issues (Lint)
+        script: |
+          flutter analyze
+          if [ $? -ne 0 ]; then
+            echo "Flutter analyze found issues. Please fix the above issues and commit the changes."
+            exit 1
+          fi
+
+      - name: Run tests
+        script: |
+          flutter test
+          if [ $? -ne 0 ]; then
+            echo "Some tests failed. Please fix the above issues and commit the changes."
+            exit 1
+          fi
+
+      - name: Check for outdated dependencies
+        script: |
+          outdated=$(flutter pub outdated --json)
+          if [ $? -ne 0 ]; then
+            echo "Dependencies are outdated. Please update your dependencies by running 'flutter pub upgrade'."
+            echo "$outdated"
+            exit 1
+          fi
+
       # Overrides the Build APK step to include app signing.
       # - name: Build and sign APK (Android)
       #   script: |
@@ -128,15 +124,13 @@ workflows:
   # Workflow for building and testing the app in a QA environment.
   qa-workflow:
     name: QA Build
-    # Inherits all steps from the flutter-workflow.
-    extends: flutter-workflow
+    max_build_duration: 120
+    instance_type: mac_mini_m1
     environment:
-      # Sets the app version and build number for QA.
+      flutter: stable
       vars:
         APP_VERSION: 1.0.0-qa
         BUILD_NUMBER: 1
-      # Specifies the Flutter channel to be used, in this case, the stable channel.
-      flutter: stable
       # Commented out: Signing credentials for Android and iOS.
       # android_signing:
       #   key_alias: $SIGNING_KEY_ALIAS
@@ -148,6 +142,35 @@ workflows:
       #     ios_app: $PROVISIONING_PROFILE
       #   code_signing_identity: $CODE_SIGNING_IDENTITY
     scripts:
+      - name: Install dependencies
+        script: |
+          flutter pub get
+
+      - name: Analyze code for issues (Lint)
+        script: |
+          flutter analyze
+          if [ $? -ne 0 ]; then
+            echo "Flutter analyze found issues. Please fix the above issues and commit the changes."
+            exit 1
+          fi
+
+      - name: Run tests
+        script: |
+          flutter test
+          if [ $? -ne 0 ]; then
+            echo "Some tests failed. Please fix the above issues and commit the changes."
+            exit 1
+          fi
+
+      - name: Check for outdated dependencies
+        script: |
+          outdated=$(flutter pub outdated --json)
+          if [ $? -ne 0 ]; then
+            echo "Dependencies are outdated. Please update your dependencies by running 'flutter pub upgrade'."
+            echo "$outdated"
+            exit 1
+          fi
+
       # Overrides the Build APK step to include app signing for QA.
       # - name: Build and sign APK (Android)
       #   script: |
@@ -170,16 +193,43 @@ workflows:
   # Workflow for development builds, typically used for internal testing and debugging.
   develop-workflow:
     name: Develop Build
-    # Inherits all steps from the flutter-workflow.
-    extends: flutter-workflow
+    max_build_duration: 120
+    instance_type: mac_mini_m1
     environment:
-      # Sets the app version and build number for development.
+      flutter: stable
       vars:
         APP_VERSION: 1.0.0-dev
         BUILD_NUMBER: 1
-      # Specifies the Flutter channel to be used, in this case, the stable channel.
-      flutter: stable
     scripts:
+      - name: Install dependencies
+        script: |
+          flutter pub get
+
+      - name: Analyze code for issues (Lint)
+        script: |
+          flutter analyze
+          if [ $? -ne 0 ]; then
+            echo "Flutter analyze found issues. Please fix the above issues and commit the changes."
+            exit 1
+          fi
+
+      - name: Run tests
+        script: |
+          flutter test
+          if [ $? -ne 0 ]; then
+            echo "Some tests failed. Please fix the above issues and commit the changes."
+            exit 1
+          fi
+
+      - name: Check for outdated dependencies
+        script: |
+          outdated=$(flutter pub outdated --json)
+          if [ $? -ne 0 ]; then
+            echo "Dependencies are outdated. Please update your dependencies by running 'flutter pub upgrade'."
+            echo "$outdated"
+            exit 1
+          fi
+
       # Overrides the Build APK step for development builds.
       - name: Build APK (Android)
         script: |
