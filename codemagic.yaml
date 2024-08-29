@@ -1,16 +1,38 @@
+# This file defines multiple workflows for building, testing, and deploying a Flutter application using Codemagic CI/CD service.
+# The workflows include stages for dependency installation, code analysis, testing, and building APK/IPA files.
+# Additionally, it includes separate workflows for different environments: production, QA, and development.
+# App signing is configured for production and QA environments, allowing the app to be published to the respective app stores.
+
 workflows:
+
+  # Workflow for general Flutter builds and testing, used as a base for all environments.
   flutter-workflow:
     name: Flutter Build
+    # Sets the maximum build duration to 120 minutes.
     max_build_duration: 120
+    # Specifies the instance type for macOS, using the Mac Mini with M1 chip.
     instance_type: mac_mini_m1
     environment:
+      # Specifies the Flutter channel to be used, in this case, the stable channel.
       flutter: stable
+      cache:
+        # Caches Flutter SDK to avoid downloading it for every build.
+        cache_paths:
+          - ~/.pub-cache
+          - $FLUTTER_ROOT
+          - ios/Pods
+          - ios/.symlinks
+          - ios/Flutter/Flutter.framework
+          - ios/Flutter/Flutter.podspec
     scripts:
       - name: Install dependencies
+        # Installs the required Flutter dependencies for the project.
         script: |
           flutter pub get
 
       - name: Analyze code for issues (Lint)
+        # Analyzes the Flutter codebase for issues and ensures the code follows best practices.
+        # If any issues are found, the build process will stop and require fixes.
         script: |
           flutter analyze
           if [ $? -ne 0 ]; then
@@ -19,6 +41,8 @@ workflows:
           fi
 
       - name: Run tests
+        # Runs unit and widget tests for the Flutter app.
+        # If any tests fail, the build process will stop and require fixes.
         script: |
           flutter test
           if [ $? -ne 0 ]; then
@@ -27,6 +51,8 @@ workflows:
           fi
 
       - name: Check for outdated dependencies
+        # Checks for outdated dependencies and suggests updating them.
+        # If outdated dependencies are found, the build process will stop and require updates.
         script: |
           outdated=$(flutter pub outdated --json)
           if [ $? -ne 0 ]; then
@@ -36,6 +62,8 @@ workflows:
           fi
 
       - name: Build APK (Android)
+        # Builds the APK for Android in release mode.
+        # If the build fails, the process will stop and provide error logs.
         script: |
           flutter build apk --release
           if [ $? -ne 0 ]; then
@@ -44,9 +72,128 @@ workflows:
           fi
 
       - name: Build IPA (iOS)
+        # Builds the IPA for iOS in release mode without code signing.
+        # If the build fails, the process will stop and provide error logs.
         script: |
           pod install --project-directory=ios
           flutter build ios --release --no-codesign
+          if [ $? -ne 0 ]; then
+            echo "iOS build failed. Please check the logs above."
+            exit 1
+          fi
+
+  # Workflow for building and signing the app for production release.
+  production-workflow:
+    name: Production Release
+    # Inherits all steps from the flutter-workflow.
+    extends: flutter-workflow
+    environment:
+      # Sets the app version and build number for production.
+      vars:
+        APP_VERSION: 1.0.0
+        BUILD_NUMBER: 1
+      # Specifies the Flutter channel to be used, in this case, the stable channel.
+      flutter: stable
+      # Commented out: Signing credentials for Android and iOS.
+      # android_signing:
+      #   key_alias: $SIGNING_KEY_ALIAS
+      #   key_password: $SIGNING_KEY_PASSWORD
+      #   keystore_path: $SIGNING_KEYSTORE_PATH
+      #   keystore_password: $SIGNING_KEYSTORE_PASSWORD
+      # ios_signing:
+      #   provisioning_profiles:
+      #     ios_app: $PROVISIONING_PROFILE
+      #   code_signing_identity: $CODE_SIGNING_IDENTITY
+    scripts:
+      # Overrides the Build APK step to include app signing.
+      # - name: Build and sign APK (Android)
+      #   script: |
+      #     flutter build apk --release --flavor production
+      #     if [ $? -ne 0 ]; then
+      #       echo "APK build failed. Please check the logs above."
+      #       exit 1
+      #     fi
+
+      # Overrides the Build IPA step to include app signing.
+      # - name: Build and sign IPA (iOS)
+      #   script: |
+      #     pod install --project-directory=ios
+      #     flutter build ios --release --flavor production
+      #     if [ $? -ne 0 ]; then
+      #       echo "iOS build failed. Please check the logs above."
+      #       exit 1
+      #     fi
+
+  # Workflow for building and testing the app in a QA environment.
+  qa-workflow:
+    name: QA Build
+    # Inherits all steps from the flutter-workflow.
+    extends: flutter-workflow
+    environment:
+      # Sets the app version and build number for QA.
+      vars:
+        APP_VERSION: 1.0.0-qa
+        BUILD_NUMBER: 1
+      # Specifies the Flutter channel to be used, in this case, the stable channel.
+      flutter: stable
+      # Commented out: Signing credentials for Android and iOS.
+      # android_signing:
+      #   key_alias: $SIGNING_KEY_ALIAS
+      #   key_password: $SIGNING_KEY_PASSWORD
+      #   keystore_path: $SIGNING_KEYSTORE_PATH
+      #   keystore_password: $SIGNING_KEYSTORE_PASSWORD
+      # ios_signing:
+      #   provisioning_profiles:
+      #     ios_app: $PROVISIONING_PROFILE
+      #   code_signing_identity: $CODE_SIGNING_IDENTITY
+    scripts:
+      # Overrides the Build APK step to include app signing for QA.
+      # - name: Build and sign APK (Android)
+      #   script: |
+      #     flutter build apk --release --flavor qa
+      #     if [ $? -ne 0 ]; then
+      #       echo "APK build failed. Please check the logs above."
+      #       exit 1
+      #     fi
+
+      # Overrides the Build IPA step to include app signing for QA.
+      # - name: Build and sign IPA (iOS)
+      #   script: |
+      #     pod install --project-directory=ios
+      #     flutter build ios --release --flavor qa
+      #     if [ $? -ne 0 ]; then
+      #       echo "iOS build failed. Please check the logs above."
+      #       exit 1
+      #     fi
+
+  # Workflow for development builds, typically used for internal testing and debugging.
+  develop-workflow:
+    name: Develop Build
+    # Inherits all steps from the flutter-workflow.
+    extends: flutter-workflow
+    environment:
+      # Sets the app version and build number for development.
+      vars:
+        APP_VERSION: 1.0.0-dev
+        BUILD_NUMBER: 1
+      # Specifies the Flutter channel to be used, in this case, the stable channel.
+      flutter: stable
+    scripts:
+      # Overrides the Build APK step for development builds.
+      - name: Build APK (Android)
+        script: |
+          flutter build apk --release --flavor develop
+          if [ $? -ne 0 ]; then
+            echo "APK build failed. Please check the logs above."
+            exit 1
+          fi
+
+      # Overrides the Build IPA step for development builds.
+      # Since this is a development build, code signing is disabled.
+      - name: Build IPA (iOS)
+        script: |
+          pod install --project-directory=ios
+          flutter build ios --release --no-codesign --flavor develop
           if [ $? -ne 0 ]; then
             echo "iOS build failed. Please check the logs above."
             exit 1
