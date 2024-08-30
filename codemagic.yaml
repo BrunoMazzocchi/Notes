@@ -46,7 +46,10 @@ workflows:
       # Caches Flutter SDK and dependencies to speed up subsequent builds.
       cache_paths:
         - ~/.pub-cache
-        - $FLUTTER_ROOT
+        - $FLUTTER_ROOT/.pub-cache
+        - $HOME/.gradle/caches
+        - $HOME/Library/Caches/CocoaPods
+        - $CM_BUILD_DIR/node_modules
         - ios/Pods
         - ios/.symlinks
         - ios/Flutter/Flutter.framework
@@ -121,6 +124,19 @@ workflows:
       #       exit 1
       #     fi
 
+    cache:
+      # Caches Flutter SDK and dependencies to speed up subsequent builds.
+      cache_paths:
+        - ~/.pub-cache
+        - $FLUTTER_ROOT/.pub-cache
+        - $HOME/.gradle/caches
+        - $HOME/Library/Caches/CocoaPods
+        - $CM_BUILD_DIR/node_modules
+        - ios/Pods
+        - ios/.symlinks
+        - ios/Flutter/Flutter.framework
+        - ios/Flutter/Flutter.podspec
+
   # Workflow for building and testing the app in a QA environment.
   qa-workflow:
     name: QA Build
@@ -190,6 +206,19 @@ workflows:
       #       exit 1
       #     fi
 
+    cache:
+      # Caches Flutter SDK and dependencies to speed up subsequent builds.
+      cache_paths:
+        - ~/.pub-cache
+        - $FLUTTER_ROOT/.pub-cache
+        - $HOME/.gradle/caches
+        - $HOME/Library/Caches/CocoaPods
+        - $CM_BUILD_DIR/node_modules
+        - ios/Pods
+        - ios/.symlinks
+        - ios/Flutter/Flutter.framework
+        - ios/Flutter/Flutter.podspec
+
   # Workflow for development builds, typically used for internal testing and debugging.
   develop-workflow:
     name: Develop Build
@@ -230,22 +259,34 @@ workflows:
             exit 1
           fi
 
-      # Overrides the Build APK step for development builds.
-      - name: Build APK (Android)
-        script: |
-          flutter build apk --release --flavor develop
-          if [ $? -ne 0 ]; then
-            echo "APK build failed. Please check the logs above."
-            exit 1
-          fi
+      # Overrides the Build APK step for development.
+      # - name: Build APK (Android)
+      #   script: |
+      #     flutter build apk --debug --flavor develop
+      #     if [ $? -ne 0 ]; then
+      #       echo "APK build failed. Please check the logs above."
+      #       exit 1
+      #     fi
 
-      # Overrides the Build IPA step for development builds.
-      # Since this is a development build, code signing is disabled.
-      - name: Build IPA (iOS)
-        script: |
-          pod install --project-directory=ios
-          flutter build ios --release --no-codesign --flavor develop
-          if [ $? -ne 0 ]; then
-            echo "iOS build failed. Please check the logs above."
-            exit 1
-          fi
+      # Overrides the Build IPA step for development.
+      # - name: Build IPA (iOS)
+      #   script: |
+      #     pod install --project-directory=ios
+      #     flutter build ios --debug --flavor develop
+      #     if [ $? -ne 0 ]; then
+      #       echo "iOS build failed. Please check the logs above."
+      #       exit 1
+      #     fi
+
+    cache:
+      # Caches Flutter SDK and dependencies to speed up subsequent builds.
+      cache_paths:
+        - ~/.pub-cache
+        - $FLUTTER_ROOT/.pub-cache
+        - $HOME/.gradle/caches
+        - $HOME/Library/Caches/CocoaPods
+        - $CM_BUILD_DIR/node_modules
+        - ios/Pods
+        - ios/.symlinks
+        - ios/Flutter/Flutter.framework
+        - ios/Flutter/Flutter.podspec
