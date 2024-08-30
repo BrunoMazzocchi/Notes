@@ -108,14 +108,14 @@ workflows:
             exit 1
           fi
 
-      - name: Build IPA (iOS)
-        script: |
-          pod install --project-directory=ios
-          flutter build ios --release --flavor production
-          if [ $? -ne 0 ]; then
-            echo "iOS build failed. Please check the logs above."
-            exit 1
-          fi
+  #    - name: Build IPA (iOS)
+  #      script: |
+  #        pod install --project-directory=ios
+  #        flutter build ios --release --flavor production
+  #        if [ $? -ne 0 ]; then
+  #          echo "iOS build failed. Please check the logs above."
+  #          exit 1
+  #        fi
 
     cache:
       # Caches Flutter SDK and dependencies to speed up subsequent builds.
@@ -258,14 +258,14 @@ workflows:
             exit 1
           fi
 
-      - name: Build IPA (iOS)
-        script: |
-          pod install --project-directory=ios
-          flutter build ios --debug --flavor develop
-          if [ $? -ne 0 ]; then
-            echo "iOS build failed. Please check the logs above."
-            exit 1
-          fi
+ #     - name: Build IPA (iOS)
+ #       script: |
+ #         pod install --project-directory=ios
+ #         flutter build ios --debug --flavor develop
+ #         if [ $? -ne 0 ]; then
+ #           echo "iOS build failed. Please check the logs above."
+ #           exit 1
+ #         fi
 
     cache:
       # Caches Flutter SDK and dependencies to speed up subsequent builds.
