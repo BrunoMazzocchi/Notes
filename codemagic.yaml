@@ -1,8 +1,3 @@
-# This file defines multiple workflows for building, testing, and deploying a Flutter application using Codemagic CI/CD service.
-# The workflows include stages for dependency installation, code analysis, testing, and building APK/IPA files.
-# Additionally, it includes separate workflows for different environments: production, QA, and development.
-# App signing is configured for production and QA environments, allowing the app to be published to the respective app stores.
-
 workflows:
 
   # Base Workflow for all environments
@@ -65,7 +60,7 @@ workflows:
       vars:
         APP_VERSION: 1.0.0
         BUILD_NUMBER: 1
-      # Commented out: Signing credentials for Android and iOS.
+      # Uncomment and configure signing credentials if needed.
       # android_signing:
       #   key_alias: $SIGNING_KEY_ALIAS
       #   key_password: $SIGNING_KEY_PASSWORD
@@ -105,24 +100,22 @@ workflows:
             exit 1
           fi
 
-      # Overrides the Build APK step to include app signing.
-      # - name: Build and sign APK (Android)
-      #   script: |
-      #     flutter build apk --release --flavor production
-      #     if [ $? -ne 0 ]; then
-      #       echo "APK build failed. Please check the logs above."
-      #       exit 1
-      #     fi
+      - name: Build APK (Android)
+        script: |
+          flutter build apk --release --flavor production
+          if [ $? -ne 0 ]; then
+            echo "APK build failed. Please check the logs above."
+            exit 1
+          fi
 
-      # Overrides the Build IPA step to include app signing.
-      # - name: Build and sign IPA (iOS)
-      #   script: |
-      #     pod install --project-directory=ios
-      #     flutter build ios --release --flavor production
-      #     if [ $? -ne 0 ]; then
-      #       echo "iOS build failed. Please check the logs above."
-      #       exit 1
-      #     fi
+      - name: Build IPA (iOS)
+        script: |
+          pod install --project-directory=ios
+          flutter build ios --release --flavor production
+          if [ $? -ne 0 ]; then
+            echo "iOS build failed. Please check the logs above."
+            exit 1
+          fi
 
     cache:
       # Caches Flutter SDK and dependencies to speed up subsequent builds.
@@ -147,7 +140,7 @@ workflows:
       vars:
         APP_VERSION: 1.0.0-qa
         BUILD_NUMBER: 1
-      # Commented out: Signing credentials for Android and iOS.
+      # Uncomment and configure signing credentials if needed.
       # android_signing:
       #   key_alias: $SIGNING_KEY_ALIAS
       #   key_password: $SIGNING_KEY_PASSWORD
@@ -187,24 +180,22 @@ workflows:
             exit 1
           fi
 
-      # Overrides the Build APK step to include app signing for QA.
-      # - name: Build and sign APK (Android)
-      #   script: |
-      #     flutter build apk --release --flavor qa
-      #     if [ $? -ne 0 ]; then
-      #       echo "APK build failed. Please check the logs above."
-      #       exit 1
-      #     fi
+      - name: Build APK (Android)
+        script: |
+          flutter build apk --release --flavor qa
+          if [ $? -ne 0 ]; then
+            echo "APK build failed. Please check the logs above."
+            exit 1
+          fi
 
-      # Overrides the Build IPA step to include app signing for QA.
-      # - name: Build and sign IPA (iOS)
-      #   script: |
-      #     pod install --project-directory=ios
-      #     flutter build ios --release --flavor qa
-      #     if [ $? -ne 0 ]; then
-      #       echo "iOS build failed. Please check the logs above."
-      #       exit 1
-      #     fi
+      - name: Build IPA (iOS)
+        script: |
+          pod install --project-directory=ios
+          flutter build ios --release --flavor qa
+          if [ $? -ne 0 ]; then
+            echo "iOS build failed. Please check the logs above."
+            exit 1
+          fi
 
     cache:
       # Caches Flutter SDK and dependencies to speed up subsequent builds.
@@ -259,24 +250,22 @@ workflows:
             exit 1
           fi
 
-      # Overrides the Build APK step for development.
-      # - name: Build APK (Android)
-      #   script: |
-      #     flutter build apk --debug --flavor develop
-      #     if [ $? -ne 0 ]; then
-      #       echo "APK build failed. Please check the logs above."
-      #       exit 1
-      #     fi
+      - name: Build APK (Android)
+        script: |
+          flutter build apk --debug --flavor develop
+          if [ $? -ne 0 ]; then
+            echo "APK build failed. Please check the logs above."
+            exit 1
+          fi
 
-      # Overrides the Build IPA step for development.
-      # - name: Build IPA (iOS)
-      #   script: |
-      #     pod install --project-directory=ios
-      #     flutter build ios --debug --flavor develop
-      #     if [ $? -ne 0 ]; then
-      #       echo "iOS build failed. Please check the logs above."
-      #       exit 1
-      #     fi
+      - name: Build IPA (iOS)
+        script: |
+          pod install --project-directory=ios
+          flutter build ios --debug --flavor develop
+          if [ $? -ne 0 ]; then
+            echo "iOS build failed. Please check the logs above."
+            exit 1
+          fi
 
     cache:
       # Caches Flutter SDK and dependencies to speed up subsequent builds.
