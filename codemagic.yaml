@@ -3,15 +3,20 @@ workflows:
   # Base Workflow for all environments
   base-workflow:
     name: Base Flutter Workflow
+    # Maximum duration allowed for the build (in minutes)
     max_build_duration: 120
+    # Type of instance to be used for the build
     instance_type: mac_mini_m1
     environment:
+      # Using the stable version of Flutter
       flutter: stable
     scripts:
+      # Step to install dependencies required for the Flutter project
       - name: Install dependencies
         script: |
           flutter pub get
 
+      # Step to analyze the code for any linting issues
       - name: Analyze code for issues (Lint)
         script: |
           flutter analyze
@@ -20,6 +25,7 @@ workflows:
             exit 1
           fi
 
+      # Step to run unit tests and validate the code
       - name: Run tests
         script: |
           flutter test
@@ -28,6 +34,7 @@ workflows:
             exit 1
           fi
 
+      # Step to check if there are any outdated dependencies
       - name: Check for outdated dependencies
         script: |
           outdated=$(flutter pub outdated --json)
@@ -38,7 +45,7 @@ workflows:
           fi
 
     cache:
-      # Caches Flutter SDK and dependencies to speed up subsequent builds.
+      # Caching paths for Flutter SDK and other dependencies to speed up future builds
       cache_paths:
         - ~/.pub-cache
         - $FLUTTER_ROOT/.pub-cache
@@ -53,14 +60,18 @@ workflows:
   # Workflow for building and signing the app for production release.
   production-workflow:
     name: Production Release
+    # Maximum duration allowed for the build (in minutes)
     max_build_duration: 120
+    # Type of instance to be used for the build
     instance_type: mac_mini_m1
     environment:
+      # Using the stable version of Flutter
       flutter: stable
       vars:
+        # Define the version of the app and the build number
         APP_VERSION: 1.0.0
         BUILD_NUMBER: 1
-      # Uncomment and configure signing credentials if needed.
+      # Uncomment and configure signing credentials if needed for Android and iOS
       # android_signing:
       #   key_alias: $SIGNING_KEY_ALIAS
       #   key_password: $SIGNING_KEY_PASSWORD
@@ -71,10 +82,12 @@ workflows:
       #     ios_app: $PROVISIONING_PROFILE
       #   code_signing_identity: $CODE_SIGNING_IDENTITY
     scripts:
+      # Step to install dependencies required for the Flutter project
       - name: Install dependencies
         script: |
           flutter pub get
 
+      # Step to analyze the code for any linting issues
       - name: Analyze code for issues (Lint)
         script: |
           flutter analyze
@@ -83,6 +96,7 @@ workflows:
             exit 1
           fi
 
+      # Step to run unit tests and validate the code
       - name: Run tests
         script: |
           flutter test
@@ -91,6 +105,7 @@ workflows:
             exit 1
           fi
 
+      # Step to check if there are any outdated dependencies
       - name: Check for outdated dependencies
         script: |
           outdated=$(flutter pub outdated --json)
@@ -100,6 +115,7 @@ workflows:
             exit 1
           fi
 
+      # Step to build the APK for Android in release mode for production
       - name: Build APK (Android)
         script: |
           flutter build apk --release --flavor production
@@ -118,7 +134,7 @@ workflows:
   #        fi
 
     cache:
-      # Caches Flutter SDK and dependencies to speed up subsequent builds.
+      # Caching paths for Flutter SDK and other dependencies to speed up future builds
       cache_paths:
         - ~/.pub-cache
         - $FLUTTER_ROOT/.pub-cache
@@ -133,14 +149,18 @@ workflows:
   # Workflow for building and testing the app in a QA environment.
   qa-workflow:
     name: QA Build
+    # Maximum duration allowed for the build (in minutes)
     max_build_duration: 120
+    # Type of instance to be used for the build
     instance_type: mac_mini_m1
     environment:
+      # Using the stable version of Flutter
       flutter: stable
       vars:
+        # Define the version of the app and the build number specific to QA
         APP_VERSION: 1.0.0-qa
         BUILD_NUMBER: 1
-      # Uncomment and configure signing credentials if needed.
+      # Uncomment and configure signing credentials if needed for Android and iOS
       # android_signing:
       #   key_alias: $SIGNING_KEY_ALIAS
       #   key_password: $SIGNING_KEY_PASSWORD
@@ -151,10 +171,12 @@ workflows:
       #     ios_app: $PROVISIONING_PROFILE
       #   code_signing_identity: $CODE_SIGNING_IDENTITY
     scripts:
+      # Step to install dependencies required for the Flutter project
       - name: Install dependencies
         script: |
           flutter pub get
 
+      # Step to analyze the code for any linting issues
       - name: Analyze code for issues (Lint)
         script: |
           flutter analyze
@@ -163,6 +185,7 @@ workflows:
             exit 1
           fi
 
+      # Step to run unit tests and validate the code
       - name: Run tests
         script: |
           flutter test
@@ -171,6 +194,7 @@ workflows:
             exit 1
           fi
 
+      # Step to check if there are any outdated dependencies
       - name: Check for outdated dependencies
         script: |
           outdated=$(flutter pub outdated --json)
@@ -180,6 +204,7 @@ workflows:
             exit 1
           fi
 
+      # Step to build the APK for Android in release mode for QA
       - name: Build APK (Android)
         script: |
           flutter build apk --release --flavor qa
@@ -188,6 +213,7 @@ workflows:
             exit 1
           fi
 
+      # Step to build the IPA for iOS in release mode for QA
       - name: Build IPA (iOS)
         script: |
           pod install --project-directory=ios
@@ -198,7 +224,7 @@ workflows:
           fi
 
     cache:
-      # Caches Flutter SDK and dependencies to speed up subsequent builds.
+      # Caching paths for Flutter SDK and other dependencies to speed up future builds
       cache_paths:
         - ~/.pub-cache
         - $FLUTTER_ROOT/.pub-cache
@@ -213,18 +239,24 @@ workflows:
   # Workflow for development builds, typically used for internal testing and debugging.
   develop-workflow:
     name: Develop Build
+    # Maximum duration allowed for the build (in minutes)
     max_build_duration: 120
+    # Type of instance to be used for the build
     instance_type: mac_mini_m1
     environment:
+      # Using the stable version of Flutter
       flutter: stable
       vars:
+        # Define the version of the app and the build number specific to development
         APP_VERSION: 1.0.0-dev
         BUILD_NUMBER: 1
     scripts:
+      # Step to install dependencies required for the Flutter project
       - name: Install dependencies
         script: |
           flutter pub get
 
+      # Step to analyze the code for any linting issues
       - name: Analyze code for issues (Lint)
         script: |
           flutter analyze
@@ -233,6 +265,7 @@ workflows:
             exit 1
           fi
 
+      # Step to run unit tests and validate the code
       - name: Run tests
         script: |
           flutter test
@@ -241,6 +274,7 @@ workflows:
             exit 1
           fi
 
+      # Step to check if there are any outdated dependencies
       - name: Check for outdated dependencies
         script: |
           outdated=$(flutter pub outdated --json)
@@ -250,25 +284,27 @@ workflows:
             exit 1
           fi
 
+      # Step to build the APK for Android in release mode for development
       - name: Build APK (Android)
         script: |
-          flutter build apk --debug --flavor develop
+          flutter build apk --release --flavor develop
           if [ $? -ne 0 ]; then
             echo "APK build failed. Please check the logs above."
             exit 1
           fi
 
- #     - name: Build IPA (iOS)
- #       script: |
- #         pod install --project-directory=ios
- #         flutter build ios --debug --flavor develop
- #         if [ $? -ne 0 ]; then
- #           echo "iOS build failed. Please check the logs above."
- #           exit 1
- #         fi
+      # Step to build the IPA for iOS in release mode for development
+      - name: Build IPA (iOS)
+        script: |
+          pod install --project-directory=ios
+          flutter build ios --release --flavor develop
+          if [ $? -ne 0 ]; then
+            echo "iOS build failed. Please check the logs above."
+            exit 1
+          fi
 
     cache:
-      # Caches Flutter SDK and dependencies to speed up subsequent builds.
+      # Caching paths for Flutter SDK and other dependencies to speed up future builds
       cache_paths:
         - ~/.pub-cache
         - $FLUTTER_ROOT/.pub-cache
