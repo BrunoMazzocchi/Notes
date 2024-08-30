@@ -294,14 +294,14 @@ workflows:
           fi
 
       # Step to build the IPA for iOS in release mode for development
-      - name: Build IPA (iOS)
-        script: |
-          pod install --project-directory=ios
-          flutter build ios --release --flavor develop
-          if [ $? -ne 0 ]; then
-            echo "iOS build failed. Please check the logs above."
-            exit 1
-          fi
+     # - name: Build IPA (iOS)
+     #   script: |
+     #     pod install --project-directory=ios
+     #     flutter build ios --release --flavor develop
+     #     if [ $? -ne 0 ]; then
+     #       echo "iOS build failed. Please check the logs above."
+     #       exit 1
+     #     fi
 
     cache:
       # Caching paths for Flutter SDK and other dependencies to speed up future builds
@@ -311,7 +311,7 @@ workflows:
         - $HOME/.gradle/caches
         - $HOME/Library/Caches/CocoaPods
         - $CM_BUILD_DIR/node_modules
-        - ios/Pods
-        - ios/.symlinks
-        - ios/Flutter/Flutter.framework
-        - ios/Flutter/Flutter.podspec
+    #    - ios/Pods
+    #    - ios/.symlinks
+    #    - ios/Flutter/Flutter.framework
+    #    - ios/Flutter/Flutter.podspec
