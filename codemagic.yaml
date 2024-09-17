@@ -250,6 +250,14 @@ workflows:
         - pattern: included-tag
           include: true
       cancel_previous_builds: false
+    publishing:
+      email:
+        recipients:
+          - brunomazzocchidev@gmail.com
+        notify:
+          success: true # To not receive a notification when a build succeeds
+          failure: true # To not receive a notification when a build fails
+
     # Maximum duration allowed for the build (in minutes)
     max_build_duration: 120
     # Type of instance to be used for the build
