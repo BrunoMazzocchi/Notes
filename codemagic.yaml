@@ -326,3 +326,11 @@ workflows:
     #    - ios/.symlinks
     #    - ios/Flutter/Flutter.framework
     #    - ios/Flutter/Flutter.podspec
+
+publishing:
+  email:
+    recipients:
+      - brunomazzocchidev@gmail.com
+    notify:
+      success: true # To not receive a notification when a build succeeds
+      failure: true # To not receive a notification when a build fails
