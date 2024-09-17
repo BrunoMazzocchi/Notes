@@ -33,7 +33,7 @@ void main() async {
       NoteEntitySchema,
       LocationEntitySchema,
     ],
-    directory: dir.path,
+    
   );
 
   final notesDatasource = NoteDatasourceImpl(
