@@ -1,5 +1,4 @@
 workflows:
-
   # Base Workflow for all environments
   base-workflow:
     name: Base Flutter Workflow
@@ -239,6 +238,18 @@ workflows:
   # Workflow for development builds, typically used for internal testing and debugging.
   develop-workflow:
     name: Develop Build
+
+    triggering:
+      events:                       # List the events that trigger builds
+        - tag
+      tag_patterns:                 # Include or exclude watched tag labels
+        - pattern: '*'
+          include: true
+        - pattern: excluded-tag
+          include: false
+        - pattern: included-tag
+          include: true
+      cancel_previous_builds: false
     # Maximum duration allowed for the build (in minutes)
     max_build_duration: 120
     # Type of instance to be used for the build
